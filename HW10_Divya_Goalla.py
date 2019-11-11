@@ -119,6 +119,8 @@ class Repository:
         for val in self.student_details.values():
             remaining_electives = []
             remaining_courses = []
+            if val.major not in self.major_details.keys():
+                print(f"Warning : {val.major} is not present in majors table")
             for major, req in self.major_details.items():
                 if val.major == major:
                     for course in req['E']:
@@ -183,7 +185,6 @@ class Repository:
             for course, students in instructor.instructor_info.items():
                 pt.add_row([instructor.cwid, instructor.name, instructor.dep, course, students])
         print(pt)
-
 
 class testcases(unittest.TestCase):
     """ unit tests """
