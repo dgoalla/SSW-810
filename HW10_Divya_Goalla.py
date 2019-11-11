@@ -57,10 +57,10 @@ class Instructor:
         
         self.instructor_info[course] += 1
     
-    def instructor_pretty_table(self):
-        """ Instructor Pretty table"""
+    # def instructor_pretty_table(self):
+    #     """ Instructor Pretty table"""
 
-        return [self.cwid, self.name, self.dep], self.instructor_info
+    #     return [self.cwid, self.name, self.dep], self.instructor_info
 
 class Repository:
     """ container to hold all of the students, instructor and grading information """
@@ -180,11 +180,8 @@ class Repository:
 
         pt = PrettyTable(field_names = ['CWID', 'Name', 'Dept', 'Course', 'Students'])
         for instructor in self.instructor_details.values():
-            instructor_information, courses = instructor.instructor_pretty_table()
-            for course, students in courses.items():
-                instructor_information.extend([course, students])
-                pt.add_row(instructor_information)
-                instructor_information = instructor_information[0:3]
+            for course, students in instructor.instructor_info.items():
+                pt.add_row([instructor.cwid, instructor.name, instructor.dep, course, students])
         print(pt)
 
 
@@ -196,26 +193,28 @@ class testcases(unittest.TestCase):
 
         student_res =  [('10103', 'Baldwin, C', 'SFEN'), ('10115', 'Wyatt, X', 'SFEN'), ('10172', 'Forbes, I', 'SFEN'), ('10175', 'Erickson, D', 'SFEN'), ('10183', 'Chapman, O', 'SFEN'), ('11399', 'Cordova, I', 'SYEN'), ('11461', 'Wright, U', 'SYEN'), ('11658', 'Kelly, P', 'SYEN'), ('11714', 'Morton, A', 'SYEN'), ('11788', 'Fuller, E', 'SYEN')] 
     
-        univ = Repository(os.getcwd())
-        test = list(univ.file_reading_gen('students.txt', 3, ';', True))
+        # univ = Repository(os.getcwd())
+        test = list(univ1.file_reading_gen('students.txt', 3, ';', True))
         self.assertEqual(test, student_res)
+        self.assertNotEqual(list(univ1.file_reading_gen('students.txt', 3, ';', False)), student_res)
         self.assertNotEqual(list(test),  [('10103', 'Baldwin, C', 'SFEN'), ('10115', 'Wyatt, X', 'SFEN')])
 
         with self.assertRaises(FileNotFoundError): 
-            list(Repository(os.getcwd()).file_reading_gen('abc.txt', 3, '|'))
+            list(univ1.file_reading_gen('abc.txt', 3, '|'))
        
     def test_file_reading_gen_instructors(self):
         """ verify file reader instructor"""
 
         instructors_res = [('98765', 'Einstein, A', 'SFEN'), ('98764', 'Feynman, R', 'SFEN'), ('98763', 'Newton, I', 'SFEN'), ('98762', 'Hawking, S', 'SYEN'), ('98761', 'Edison, A', 'SYEN'), ('98760', 'Darwin, C', 'SYEN')]
 
-        univ = Repository(os.getcwd())
-        test = univ.file_reading_gen('instructors.txt', 3, '|', True )
+        # univ = Repository(os.getcwd())
+        test = univ1.file_reading_gen('instructors.txt', 3, '|', True )
         self.assertEqual(list(test),  instructors_res)
+        self.assertNotEqual(list(univ1.file_reading_gen('instructors.txt', 3, '|', False)), instructors_res)
         self.assertNotEqual(list(test),  [('10103', 'Baldwin, C', 'SFEN'), ('10115', 'Wyatt, X', 'SFEN')])
 
         with self.assertRaises(FileNotFoundError): 
-            list(Repository(os.getcwd()).file_reading_gen('abc.txt', 3, '|'))
+            list(univ1.file_reading_gen('abc.txt', 3, '|'))
         
 
     def test_file_reading_gen_grades(self):
@@ -225,12 +224,13 @@ class testcases(unittest.TestCase):
                     'CS 545', 'A', '98764'), ('10172', 'SSW 555', 'A', '98763'), ('10172', 'SSW 567', 'A-', '98765'), ('10175', 'SSW 567', 'A', '98765'), ('10175', 'SSW 564', 'A', '98764'), ('10175', 'SSW 687', 'B-', '98764'), ('10183', 'SSW 689', 'A', '98763'), ('11399', 'SSW 540',
                     'B', '98765'), ('11461', 'SYS 800', 'A', '98760'), ('11461', 'SYS 750', 'A-', '98760'), ('11461', 'SYS 611', 'A', '98760'), ('11658', 'SSW 540', 'F', '98765'), ('11714', 'SYS 611', 'A', '98760'), ('11714', 'SYS 645', 'C', '98760'), ('11788', 'SSW 540', 'A', '98765')]
     
-        test = Repository(os.getcwd()).file_reading_gen('grades.txt', 4, '|', True)
+        test = univ1.file_reading_gen('grades.txt', 4, '|', True)
+        self.assertNotEqual(list(univ1.file_reading_gen('grades.txt', 4, '|', False)), grades_res)
         self.assertEqual(list(test),  grades_res)
         self.assertNotEqual(list(test),  [('10103', 'Baldwin, C', 'SFEN'), ('10115', 'Wyatt, X', 'SFEN')])
 
         with self.assertRaises(FileNotFoundError): 
-            list(Repository(os.getcwd()).file_reading_gen('abc.txt', 3, '\t'))
+            list(univ1.file_reading_gen('abc.txt', 3, '\t'))
        
 
     def test_majors_prettytable(self):
@@ -239,7 +239,9 @@ class testcases(unittest.TestCase):
         pt = PrettyTable(field_names = ['Dept', 'Required', 'Electives'])
         pt.add_row(['SFEN', ['SSW 540', 'SSW 564', 'SSW 555', 'SSW 567'], ['CS 501', 'CS 513', 'CS 545']])
         pt.add_row(['SYEN', ['SYS 671', 'SYS 612', 'SYS 800'], ['SSW 810', 'SSW 565', 'SSW 540']])
-        self.assertEqual(Repository(os.getcwd()).majors_prettytable(), print(pt))
+        self.assertEqual(univ1.majors_prettytable(), print(pt))
+
+univ1 = Repository(os.getcwd())
 
 def main():
     
