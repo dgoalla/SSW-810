@@ -1,0 +1,20 @@
+select Name from instructors where CWID='98763';
+
+select Dept, count(*) as dep_count from instructors group by Dept;
+
+select Grade, count(Grade) as grade_count from grades group by Grade order by Grade asc limit 1;
+
+select a.Name, a.CWID, a.Major, b.Course, b.Grade from students as a
+join grades as b on a.CWID = b.StudentCWID;
+
+select a.Name, a.CWID, a.Major, b.Course, b.Grade from students as a
+join grades as b on a.CWID = b.StudentCWID
+where b.Course= 'SSW 810';
+
+select a.CWID, a.Name, a.Dept, b.Course, count(b.Course) as num_of_students from instructors as a
+join grades as b on a.CWID = b.InstructorCWID
+group by a.CWID, a.Name, a.Dept, b.Course
+order by CWID desc
+
+
+
